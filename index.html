@@ -4,52 +4,48 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Self Puzzle - Go Viral!</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/konva@8.4.3/konva.min.js"></script>
 </head>
 <body>
 
-    <!-- Background Animation -->
-    <div class="stars"></div>
-    <div class="twinkling"></div>
+<!-- Background Animation -->
+<div class="stars"></div>
+<div class="twinkling"></div>
 
-    <!-- Futuristic Intro -->
-    <div id="intro">
-        <h1 class="intro-title">Welcome to SELF PUZZLE</h1>
-        <p class="intro-description">Unleash your mind. Solve yourself!</p>
-        <button id="start-button">Start</button>
+<!-- Welcome Screen -->
+<div id="welcome-screen">
+    <h1 class="neon-title">WELCOME TO SELF PUZZLE</h1>
+    <p class="neon-subtitle">Unleash your mind. Solve yourself!</p>
+    <button id="start-btn">Start</button>
+</div>
+
+<!-- Game Container -->
+<div class="container" id="game-container" style="display: none;">
+    <h1 class="neon-title">SELF PUZZLE</h1>
+    
+    <label class="upload-btn">
+        📸 UPLOAD PHOTO
+        <input type="file" id="photoUpload" accept="image/*" hidden />
+    </label>
+
+    <div id="timer" class="neon-timer">01:00</div>
+    <div id="puzzle-container"></div>
+
+    <!-- Result Popups -->
+    <div id="win-popup" class="popup">
+        <img src="images/aniversário-comemoração.gif" class="emoji">
+        <h2 class="neon-win">YOU WON! 🎉</h2>
+        <audio id="win-sound" src="sounds/happy-smile.wav"></audio>
     </div>
 
-    <!-- Game Container -->
-    <div id="game-container" style="display: none;">
-        <h1 class="neon-title">SELF PUZZLE</h1>
-
-        <!-- Upload Photo Button -->
-        <label class="upload-btn">
-            📸 UPLOAD PHOTO
-            <input type="file" id="photoUpload" accept="image/*" hidden />
-        </label>
-
-        <!-- Timer -->
-        <div id="timer" class="neon-timer">01:00</div>
-
-        <!-- Puzzle Container -->
-        <div id="puzzle-container"></div>
-
-        <!-- Result Popups -->
-        <div id="win-popup" class="popup">
-            <img src="images/win-emoji.gif" class="emoji" />
-            <h2 class="neon-win">YOU WON! 🎉</h2>
-            <audio id="win-sound" src="sounds/happy-smile.wav"></audio>
-        </div>
-
-        <div id="lose-popup" class="popup">
-            <img src="images/lose-emoji.gif" class="emoji" />
-            <h2 class="neon-lose">TIME'S UP! 😭</h2>
-            <audio id="lose-sound" src="sounds/sad-crying.wav"></audio>
-        </div>
+    <div id="lose-popup" class="popup">
+        <img src="images/crying-emoji-crying.gif" class="emoji">
+        <h2 class="neon-lose">TIME'S UP! 😭</h2>
+        <audio id="lose-sound" src="sounds/sad-crying.wav"></audio>
     </div>
+</div>
 
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
