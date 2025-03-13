@@ -1,100 +1,49 @@
-/* Cosmic Background */
-@keyframes move-twink-back {
-    from { background-position: 0 0; }
-    to { background-position: -10000px 5000px; }
+body {
+  background-color: #000;
+  font-family: Arial, sans-serif;
+  color: #fff;
+  text-align: center;
 }
 
-.stars, .twinkling {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
+.title {
+  color: #ff00ff;
+  text-shadow: 0 0 20px #ff00ff;
+  margin-bottom: 20px;
 }
 
-.stars {
-    background: #000 url('https://www.script-tutorials.com/demos/360/images/stars.png') repeat top center;
-    z-index: -2;
+#upload {
+  background-color: #1f1f1f;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 20px #00ff00;
 }
 
-.twinkling {
-    background: transparent url('https://www.script-tutorials.com/demos/360/images/twinkling.png') repeat top center;
-    z-index: -1;
-    animation: move-twink-back 200s linear infinite;
-}
-
-/* Neon Styling */
-.neon-title {
-    color: #fff;
-    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073;
-    text-align: center;
-    font-size: 3em;
-}
-
-.upload-btn {
-    background: linear-gradient(45deg, #ff00ff, #00ffff);
-    padding: 15px 30px;
-    border-radius: 30px;
-    cursor: pointer;
-    display: block;
-    width: fit-content;
-    margin: 20px auto;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.upload-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 20px #00ffff;
-}
-
-/* Puzzle Container */
 #puzzle-container {
-    width: 500px;
-    height: 500px;
-    margin: 20px auto;
-    border: 3px solid #00ffff;
-    box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
-    background: rgba(0, 0, 0, 0.7);
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  gap: 5px;
+  justify-content: center;
+  margin-top: 20px;
 }
 
-/* Timer */
-.neon-timer {
-    font-size: 2.5em;
-    text-align: center;
-    color: #00ff00;
-    text-shadow: 0 0 10px #00ff00;
+.piece {
+  width: 100px;
+  height: 100px;
+  border: 2px solid #00ff00;
+  box-shadow: 0 0 20px #00ff00;
+  background-size: 300px 300px;
+  cursor: pointer;
+  transition: transform 0.2s;
 }
 
-/* Result Popups */
-.popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.9);
-    padding: 30px;
-    border-radius: 20px;
-    text-align: center;
-    display: none;
-    border: 2px solid #ff00ff;
-    box-shadow: 0 0 50px #ff00ff;
+.piece:hover {
+  transform: scale(1.1);
 }
 
-.emoji {
-    width: 150px;
-    height: 150px;
-}
-
-.neon-win {
-    color: #00ff00;
-    text-shadow: 0 0 10px #00ff00;
-}
-
-.neon-lose {
-    color: #ff0000;
-    text-shadow: 0 0 10px #ff0000;
+.timer {
+  margin-top: 10px;
+  color: #00ff00;
+  font-size: 24px;
 }
