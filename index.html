@@ -1,41 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Self Puzzle 3000</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberPuzzle 3000</title>
+  <link rel="stylesheet" href="styles/cyber.css">
 </head>
 <body>
-  <!-- Futuristic Background -->
   <div id="background-grid"></div>
-
-  <!-- Game Container -->
+  
   <div id="game-container">
-    <h1 class="neon-title">SELF PUZZLE 3000</h1>
-    <p>Drag and solve the pieces to unlock the future.</p>
-
-    <!-- Puzzle Area -->
-    <div id="puzzle-area"></div>
-
-    <!-- Buttons -->
-    <div class="action-buttons">
-      <button id="hint-button" class="neon-button">Get Hint</button>
-      <button id="restart-button" class="neon-button">Restart</button>
+    <div id="hud">
+      <div class="hud-item">TIME: <span id="timer">00:00</span></div>
+      <div class="hud-item">MOVES: <span id="moves">0</span></div>
+      <div class="hud-item">ERRORS: <span id="errors">0</span></div>
     </div>
 
-    <!-- Leaderboard -->
+    <h1 class="neon-title">CYBER<span>3000</span></h1>
+    
+    <div id="puzzle-area"></div>
+    
+    <div class="action-buttons">
+      <button id="hint-button" class="neon-button">HACK HINT</button>
+      <button id="restart-button" class="neon-button">REBOOT</button>
+    </div>
+
     <div id="leaderboard">
-      <h2>Leaderboard</h2>
+      <h2>GLOBAL LEADERBOARD</h2>
       <ul id="leaderboard-list"></ul>
+    </div>
+
+    <div id="victory-screen" class="hidden">
+      <div class="victory-content">
+        <h2>SYSTEM HACKED</h2>
+        <div class="stats">
+          <p>TIME: <span id="time-taken">00:00</span></p>
+          <p>ERRORS: <span id="mistakes-made">0</span></p>
+        </div>
+        <button id="share-button" class="neon-button">SHARE ACHIEVEMENT</button>
+      </div>
     </div>
   </div>
 
-  <!-- Audio -->
-  <audio id="success-sound" src="./sounds/success.mp3"></audio>
-  <audio id="drag-sound" src="./sounds/drag.mp3"></audio>
-
-  <!-- Scripts -->
-  <script src="script.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+  <script src="scripts/effects.js"></script>
+  <script src="scripts/audio.js"></script>
+  <script src="scripts/leaderboard.js"></script>
+  <script src="scripts/game.js"></script>
 </body>
 </html>
