@@ -3,41 +3,219 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Self Puzzle - Go Viral!</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/konva@8.4.3/konva.min.js"></script>
+    <title>Self Puzzle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #ff00ff;
+            text-shadow: 0 0 15px #ff00ff;
+            margin-top: 20px;
+        }
+
+        .upload-btn {
+            background-color: #1e90ff;
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 0 10px #1e90ff;
+            transition: background-color 0.3s;
+        }
+
+        .upload-btn:hover {
+            background-color: #00bfff;
+        }
+
+        .timer {
+            color: #00ff00;
+            font-size: 1.5rem;
+            margin-top: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .puzzle-container {
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 2px;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 20px #00ffff;
+            perspective: 1000px;
+        }
+
+        .puzzle-piece {
+            width: 100%;
+            height: 100%;
+            background-size: 300px 300px;
+            transition: transform 0.2s;
+            border: 1px solid #000;
+            cursor: pointer;
+            box-shadow: 0 0 10px #00ffcc;
+            transform-style: preserve-3d;
+        }
+
+        .puzzle-piece:hover {
+            transform: rotateY(10deg) rotateX(10deg) scale(1.05);
+            box-shadow: 0 0 15px #00ffcc;
+        }
+
+        .message {
+            font-size: 1.5rem;
+            margin-top: 10px;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+    </style>
 </head>
 <body>
-    <!-- Background Animation -->
-    <div class="stars"></div>
-    <div class="twinkling"></div>
-    
-    <!-- Game Container -->
-    <div class="container">
-        <h1 class="neon-title">SELF PUZZLE</h1>
-        
-        <label class="upload-btn">
-            📸 UPLOAD PHOTO
-            <input type="file" id="photoUpload" accept="image/*" hidden />
-        </label>
+    <h1>SELF PUZZLE</h1>
+    <input type="file" id="upload" class="upload-btn" accept="image/*" />
+    <div id="timer" class="timer">01:00</div>
+    <div id="puzzle" class="puzzle-container"></div>
+    <div id="message" class="message"></div>
 
-        <div id="timer" class="neon-timer">01:00</div>
-        <div id="puzzle-container"></div>
+    <script>
+        let timer;
+        let timeLeft = 60;
+        let puzzleData = [];
+        let size = 3;
 
-        <!-- Result Popups -->
-        <div id="win-popup" class="popup">
-            <img src="images/aniversário-comemoração.gif" class="emoji">
-            <h2 class="neon-win">YOU WON! 🎉</h2>
-            <audio id="win-sound" src="sounds/happy smile.wav"></audio>
-        </div>
+        document.getElementById('upload').addEventListener('change', handleFile);
 
-        <div id="lose-popup" class="popup">
-            <img src="images/crying-emoji-crying.gif" class="emoji">
-            <h2 class="neon-lose">TIME'S UP! 😭</h2>
-            <audio id="lose-sound" src="sounds/sad-crying.wav"></audio>
-        </div>
-    </div>
+        function handleFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-    <script src="script.js"></script>
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                createPuzzle(e.target.result);
+                startTimer();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function createPuzzle(imageSrc) {
+            const puzzle = document.getElementById('puzzle');
+            puzzle.innerHTML = '';
+            puzzleData = [];
+            const pieceSize = 100;
+
+            for (let row = 0; row < size; row++) {
+                for (let col = 0; col < size; col++) {
+                    const piece = document.createElement('div');
+                    piece.classList.add('puzzle-piece');
+                    piece.style.backgroundImage = `url(${imageSrc})`;
+                    piece.style.backgroundPosition = `-${col * pieceSize}px -${row * pieceSize}px`;
+                    piece.dataset.row = row;
+                    piece.dataset.col = col;
+                    puzzle.appendChild(piece);
+
+                    puzzleData.push({ element: piece, row, col });
+                }
+            }
+
+            shufflePuzzle();
+            addDragAndDrop();
+        }
+
+        function shufflePuzzle() {
+            for (let i = puzzleData.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [puzzleData[i], puzzleData[j]] = [puzzleData[j], puzzleData[i]];
+                const piece = puzzleData[i].element;
+                const targetPiece = puzzleData[j].element;
+
+                const tempRow = piece.dataset.row;
+                const tempCol = piece.dataset.col;
+
+                piece.dataset.row = targetPiece.dataset.row;
+                piece.dataset.col = targetPiece.dataset.col;
+
+                targetPiece.dataset.row = tempRow;
+                targetPiece.dataset.col = tempCol;
+
+                updatePosition(piece);
+                updatePosition(targetPiece);
+            }
+        }
+
+        function updatePosition(piece) {
+            piece.style.gridRowStart = Number(piece.dataset.row) + 1;
+            piece.style.gridColumnStart = Number(piece.dataset.col) + 1;
+        }
+
+        function addDragAndDrop() {
+            puzzleData.forEach((piece) => {
+                piece.element.setAttribute('draggable', 'true');
+
+                piece.element.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', piece.element.dataset.row + ',' + piece.element.dataset.col);
+                });
+
+                piece.element.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                });
+
+                piece.element.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const [fromRow, fromCol] = e.dataTransfer.getData('text/plain').split(',');
+                    const toRow = piece.element.dataset.row;
+                    const toCol = piece.element.dataset.col;
+
+                    swapPieces(fromRow, fromCol, toRow, toCol);
+                });
+            });
+        }
+
+        function swapPieces(fromRow, fromCol, toRow, toCol) {
+            const fromPiece = puzzleData.find((p) => p.row == fromRow && p.col == fromCol);
+            const toPiece = puzzleData.find((p) => p.row == toRow && p.col == toCol);
+
+            if (fromPiece && toPiece) {
+                [fromPiece.row, toPiece.row] = [toPiece.row, fromPiece.row];
+                [fromPiece.col, toPiece.col] = [toPiece.col, fromPiece.col];
+
+                updatePosition(fromPiece.element);
+                updatePosition(toPiece.element);
+
+                checkWin();
+            }
+        }
+
+        function checkWin() {
+            if (puzzleData.every((p) => p.row == p.element.dataset.row && p.col == p.element.dataset.col)) {
+                clearInterval(timer);
+                document.getElementById('message').innerText = 'YOU WON! 🎉';
+            }
+        }
+
+        function startTimer() {
+            timeLeft = 60;
+            document.getElementById('timer').innerText = `01:00`;
+            clearInterval(timer);
+
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = `00:${String(timeLeft).padStart(2, '0')}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    document.getElementById('message').innerText = "TIME'S UP! 😭";
+                }
+            }, 1000);
+        }
+    </script>
 </body>
 </html>
