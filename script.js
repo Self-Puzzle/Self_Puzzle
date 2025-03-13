@@ -1,107 +1,88 @@
-let timeLeft = 60;
-let timerId;
-let correctPieces = 0;
-const totalPieces = 9;
+// Puzzle Logic
+document.addEventListener('DOMContentLoaded', () => {
+    const puzzleArea = document.getElementById('puzzle-area');
+    const hintButton = document.getElementById('hint-button');
+    const restartButton = document.getElementById('restart-button');
 
-// Initialize Konva Stage
-const stage = new Konva.Stage({
-    container: 'puzzle-container',
-    width: 500,
-    height: 500,
-});
+    let pieces = [];
+    let moves = 0;
+    let startTime;
+    let timerInterval;
 
-// Timer Function
-function startTimer() {
-    timerId = setInterval(() => {
-        timeLeft--;
-        document.getElementById('timer').textContent = 
-            `${String(Math.floor(timeLeft/60)).padStart(2, '0')}:${String(timeLeft%60).padStart(2, '0')}`;
-        
-        if (timeLeft <= 0) {
-            clearInterval(timerId);
-            showResult(false);
+    const createPuzzle = () => {
+        puzzleArea.innerHTML = '';
+        pieces = [];
+        moves = 0;
+        startTime = Date.now();
+
+        // Create pieces
+        for (let i = 0; i < 9; i++) {
+            const piece = document.createElement('div');
+            piece.classList.add('puzzle-piece');
+            piece.textContent = i + 1;
+            piece.setAttribute('data-index', i);
+            piece.draggable = true;
+
+            pieces.push(piece);
+            puzzleArea.appendChild(piece);
         }
-    }, 1000);
-}
 
-// Check Win Condition
-function checkWin() {
-    correctPieces++;
-    if (correctPieces === totalPieces) {
-        clearInterval(timerId);
-        showResult(true);
-    }
-}
+        // Shuffle pieces
+        shufflePieces();
 
-// Show Result
-function showResult(isWin) {
-    const popup = document.getElementById(isWin ? 'win-popup' : 'lose-popup');
-    const sound = document.getElementById(isWin ? 'win-sound' : 'lose-sound');
-    
-    popup.style.display = 'block';
-    sound.play();
-}
+        // Start Timer
+        startTimer();
 
-// Create Puzzle
-function createPuzzle(image, gridSize = 3) {
-    const layer = new Konva.Layer();
-    const tileSize = 500 / gridSize;
-    let positions = [];
+        // Drag/Drop Setup
+        pieces.forEach(piece => {
+            piece.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', piece.getAttribute('data-index'));
+            });
 
-    for (let i = 0; i < gridSize; i++) {
-        for (let j = 0; j < gridSize; j++) {
-            positions.push({ x: j * tileSize, y: i * tileSize });
-        }
-    }
+            piece.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
 
-    positions = positions.sort(() => Math.random() - 0.5);
+            piece.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const fromIndex = e.dataTransfer.getData('text/plain');
+                const toIndex = piece.getAttribute('data-index');
 
-    positions.forEach((pos, index) => {
-        const tile = new Konva.Image({
-            image: image,
-            crop: {
-                x: (index % gridSize) * tileSize,
-                y: Math.floor(index / gridSize) * tileSize,
-                width: tileSize,
-                height: tileSize,
-            },
-            width: tileSize,
-            height: tileSize,
-            draggable: true,
-            x: pos.x,
-            y: pos.y
+                swapPieces(fromIndex, toIndex);
+                moves++;
+            });
         });
+    };
 
-        tile.on('dragend', () => {
-            const correctX = (index % gridSize) * tileSize;
-            const correctY = Math.floor(index / gridSize) * tileSize;
-            
-            if (Math.abs(tile.x() - correctX) < 10 && 
-                Math.abs(tile.y() - correctY) < 10) {
-                tile.x(correctX);
-                tile.y(correctY);
-                tile.draggable(false);
-                checkWin();
-            }
+    const shufflePieces = () => {
+        pieces.sort(() => Math.random() - 0.5);
+        pieces.forEach((piece, index) => {
+            piece.style.order = index;
         });
+    };
 
-        layer.add(tile);
+    const swapPieces = (fromIndex, toIndex) => {
+        const temp = pieces[fromIndex].textContent;
+        pieces[fromIndex].textContent = pieces[toIndex].textContent;
+        pieces[toIndex].textContent = temp;
+    };
+
+    const startTimer = () => {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            const timeElapsed = Math.floor((Date.now() - startTime) / 1000);
+            document.getElementById('timer').textContent = `${timeElapsed}s`;
+        }, 1000);
+    };
+
+    // Hint Button
+    hintButton.addEventListener('click', () => {
+        alert('Hint: Match the pieces in order.');
     });
 
-    stage.add(layer);
-    startTimer();
-}
+    // Restart Button
+    restartButton.addEventListener('click', createPuzzle);
 
-document.getElementById('photoUpload').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    
-    reader.onload = function(event) {
-        const image = new Image();
-        image.onload = function() {
-            createPuzzle(image);
-        };
-        image.src = event.target.result;
-    };
-    reader.readAsDataURL(file);
+    // Initialize Game
+    createPuzzle();
 });
