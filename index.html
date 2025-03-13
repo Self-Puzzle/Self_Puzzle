@@ -7,215 +7,217 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #000;
-            color: #fff;
+            background-color: black;
+            color: white;
             text-align: center;
             margin: 0;
             padding: 0;
+            overflow: hidden;
         }
 
         h1 {
-            font-size: 2rem;
             color: #ff00ff;
-            text-shadow: 0 0 15px #ff00ff;
-            margin-top: 20px;
+            text-shadow: 0 0 20px #ff00ff;
+            margin-bottom: 10px;
         }
 
         .upload-btn {
-            background-color: #1e90ff;
-            color: #fff;
-            padding: 12px 24px;
+            background-color: #00aaff;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
             border: none;
-            border-radius: 20px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 1rem;
-            box-shadow: 0 0 10px #1e90ff;
-            transition: background-color 0.3s;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px #00aaff;
+            transition: 0.3s;
         }
 
         .upload-btn:hover {
-            background-color: #00bfff;
+            background-color: #0088cc;
         }
 
-        .timer {
+        #timer {
             color: #00ff00;
-            font-size: 1.5rem;
-            margin-top: 10px;
+            font-size: 24px;
+            margin-bottom: 10px;
             text-shadow: 0 0 10px #00ff00;
         }
 
-        .puzzle-container {
+        #game-board {
             width: 300px;
             height: 300px;
-            margin: 20px auto;
+            margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(3, 1fr);
             gap: 2px;
-            border: 2px solid #00ffff;
-            box-shadow: 0 0 20px #00ffff;
-            perspective: 1000px;
+            border: 4px solid #00ffff;
+            box-shadow: 0 0 30px #00ffff;
+            background-color: black;
+            position: relative;
         }
 
-        .puzzle-piece {
-            width: 100%;
-            height: 100%;
+        .tile {
+            width: 100px;
+            height: 100px;
             background-size: 300px 300px;
-            transition: transform 0.2s;
-            border: 1px solid #000;
             cursor: pointer;
-            box-shadow: 0 0 10px #00ffcc;
-            transform-style: preserve-3d;
+            transition: 0.3s;
+            box-shadow: 0 0 10px #ff00ff;
+            border-radius: 5px;
         }
 
-        .puzzle-piece:hover {
-            transform: rotateY(10deg) rotateX(10deg) scale(1.05);
-            box-shadow: 0 0 15px #00ffcc;
+        .empty {
+            background-color: black;
+            box-shadow: none;
+            border: none;
+            cursor: default;
         }
 
-        .message {
-            font-size: 1.5rem;
-            margin-top: 10px;
+        #message {
+            color: #ff00ff;
+            font-size: 20px;
             text-shadow: 0 0 10px #ff00ff;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>SELF PUZZLE</h1>
-    <input type="file" id="upload" class="upload-btn" accept="image/*" />
-    <div id="timer" class="timer">01:00</div>
-    <div id="puzzle" class="puzzle-container"></div>
-    <div id="message" class="message"></div>
 
-    <script>
-        let timer;
-        let timeLeft = 60;
-        let puzzleData = [];
-        let size = 3;
+<h1>SELF PUZZLE</h1>
 
-        document.getElementById('upload').addEventListener('change', handleFile);
+<input type="file" id="fileInput" accept="image/*" class="upload-btn" />
+<div id="timer">01:00</div>
+<div id="game-board"></div>
+<div id="message"></div>
 
-        function handleFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+<audio id="move-sound" src="https://www.fesliyanstudios.com/play-mp3/387" preload="auto"></audio>
+<audio id="bg-music" src="https://www.fesliyanstudios.com/play-mp3/6568" preload="auto" loop></audio>
 
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                createPuzzle(e.target.result);
-                startTimer();
-            };
-            reader.readAsDataURL(file);
-        }
+<script>
+    const gameBoard = document.getElementById("game-board");
+    const timerDisplay = document.getElementById("timer");
+    const messageDisplay = document.getElementById("message");
+    const moveSound = document.getElementById("move-sound");
+    const bgMusic = document.getElementById("bg-music");
 
-        function createPuzzle(imageSrc) {
-            const puzzle = document.getElementById('puzzle');
-            puzzle.innerHTML = '';
-            puzzleData = [];
-            const pieceSize = 100;
+    let tiles = [];
+    let emptyTile = { x: 2, y: 2 };
+    let timeLeft = 60;
+    let timer;
 
-            for (let row = 0; row < size; row++) {
-                for (let col = 0; col < size; col++) {
-                    const piece = document.createElement('div');
-                    piece.classList.add('puzzle-piece');
-                    piece.style.backgroundImage = `url(${imageSrc})`;
-                    piece.style.backgroundPosition = `-${col * pieceSize}px -${row * pieceSize}px`;
-                    piece.dataset.row = row;
-                    piece.dataset.col = col;
-                    puzzle.appendChild(piece);
+    document.getElementById("fileInput").addEventListener("change", handleImage);
 
-                    puzzleData.push({ element: piece, row, col });
-                }
+    function handleImage(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            createPuzzle(e.target.result);
+            startGame();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function createPuzzle(imageSrc) {
+        gameBoard.innerHTML = "";
+        tiles = [];
+
+        for (let i = 0; i < 9; i++) {
+            const tile = document.createElement("div");
+            tile.classList.add("tile");
+            if (i !== 8) {
+                tile.style.backgroundImage = `url(${imageSrc})`;
+                tile.style.backgroundPosition = `-${(i % 3) * 100}px -${Math.floor(i / 3) * 100}px`;
+                tile.dataset.index = i;
+                tile.addEventListener("click", () => moveTile(i));
+            } else {
+                tile.classList.add("empty");
+                emptyTile = { x: i % 3, y: Math.floor(i / 3) };
             }
 
-            shufflePuzzle();
-            addDragAndDrop();
+            tiles.push(tile);
+            gameBoard.appendChild(tile);
         }
 
-        function shufflePuzzle() {
-            for (let i = puzzleData.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [puzzleData[i], puzzleData[j]] = [puzzleData[j], puzzleData[i]];
-                const piece = puzzleData[i].element;
-                const targetPiece = puzzleData[j].element;
+        shuffleTiles();
+    }
 
-                const tempRow = piece.dataset.row;
-                const tempCol = piece.dataset.col;
+    function shuffleTiles() {
+        for (let i = 0; i < 100; i++) {
+            const moves = getPossibleMoves();
+            const move = moves[Math.floor(Math.random() * moves.length)];
+            swapTiles(move.x, move.y);
+        }
+    }
 
-                piece.dataset.row = targetPiece.dataset.row;
-                piece.dataset.col = targetPiece.dataset.col;
+    function getPossibleMoves() {
+        const moves = [];
+        if (emptyTile.x > 0) moves.push({ x: emptyTile.x - 1, y: emptyTile.y });
+        if (emptyTile.x < 2) moves.push({ x: emptyTile.x + 1, y: emptyTile.y });
+        if (emptyTile.y > 0) moves.push({ x: emptyTile.x, y: emptyTile.y - 1 });
+        if (emptyTile.y < 2) moves.push({ x: emptyTile.x, y: emptyTile.y + 1 });
+        return moves;
+    }
 
-                targetPiece.dataset.row = tempRow;
-                targetPiece.dataset.col = tempCol;
+    function swapTiles(x, y) {
+        const targetIndex = y * 3 + x;
+        const emptyIndex = emptyTile.y * 3 + emptyTile.x;
 
-                updatePosition(piece);
-                updatePosition(targetPiece);
+        [tiles[targetIndex], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[targetIndex]];
+        emptyTile = { x, y };
+
+        renderTiles();
+    }
+
+    function renderTiles() {
+        tiles.forEach((tile, index) => {
+            gameBoard.appendChild(tile);
+            if (!tile.classList.contains("empty")) {
+                tile.style.transform = `translate(${(index % 3) * 100}px, ${Math.floor(index / 3) * 100}px)`;
             }
-        }
+        });
+    }
 
-        function updatePosition(piece) {
-            piece.style.gridRowStart = Number(piece.dataset.row) + 1;
-            piece.style.gridColumnStart = Number(piece.dataset.col) + 1;
-        }
+    function moveTile(index) {
+        const x = index % 3;
+        const y = Math.floor(index / 3);
 
-        function addDragAndDrop() {
-            puzzleData.forEach((piece) => {
-                piece.element.setAttribute('draggable', 'true');
+        if (
+            (Math.abs(x - emptyTile.x) === 1 && y === emptyTile.y) ||
+            (Math.abs(y - emptyTile.y) === 1 && x === emptyTile.x)
+        ) {
+            swapTiles(x, y);
+            moveSound.play();
 
-                piece.element.addEventListener('dragstart', (e) => {
-                    e.dataTransfer.setData('text/plain', piece.element.dataset.row + ',' + piece.element.dataset.col);
-                });
-
-                piece.element.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                });
-
-                piece.element.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    const [fromRow, fromCol] = e.dataTransfer.getData('text/plain').split(',');
-                    const toRow = piece.element.dataset.row;
-                    const toCol = piece.element.dataset.col;
-
-                    swapPieces(fromRow, fromCol, toRow, toCol);
-                });
-            });
-        }
-
-        function swapPieces(fromRow, fromCol, toRow, toCol) {
-            const fromPiece = puzzleData.find((p) => p.row == fromRow && p.col == fromCol);
-            const toPiece = puzzleData.find((p) => p.row == toRow && p.col == toCol);
-
-            if (fromPiece && toPiece) {
-                [fromPiece.row, toPiece.row] = [toPiece.row, fromPiece.row];
-                [fromPiece.col, toPiece.col] = [toPiece.col, fromPiece.col];
-
-                updatePosition(fromPiece.element);
-                updatePosition(toPiece.element);
-
-                checkWin();
-            }
-        }
-
-        function checkWin() {
-            if (puzzleData.every((p) => p.row == p.element.dataset.row && p.col == p.element.dataset.col)) {
+            if (isSolved()) {
                 clearInterval(timer);
-                document.getElementById('message').innerText = 'YOU WON! 🎉';
+                messageDisplay.innerHTML = "YOU WIN! 🎉";
             }
         }
+    }
 
-        function startTimer() {
-            timeLeft = 60;
-            document.getElementById('timer').innerText = `01:00`;
-            clearInterval(timer);
+    function isSolved() {
+        return tiles.every((tile, index) => tile.dataset.index == index || tile.classList.contains("empty"));
+    }
 
-            timer = setInterval(() => {
-                timeLeft--;
-                document.getElementById('timer').innerText = `00:${String(timeLeft).padStart(2, '0')}`;
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    document.getElementById('message').innerText = "TIME'S UP! 😭";
-                }
-            }, 1000);
-        }
-    </script>
+    function startGame() {
+        timeLeft = 60;
+        clearInterval(timer);
+        timer = setInterval(() => {
+            timeLeft--;
+            timerDisplay.innerText = `00:${timeLeft < 10 ? "0" + timeLeft : timeLeft}`;
+            if (timeLeft === 0) {
+                clearInterval(timer);
+                messageDisplay.innerText = "TIME'S UP! 😭";
+            }
+        }, 1000);
+
+        bgMusic.play();
+    }
+</script>
 </body>
 </html>
