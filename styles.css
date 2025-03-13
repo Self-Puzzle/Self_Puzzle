@@ -2,9 +2,10 @@
 body {
   background-color: #000;
   color: #00f3ff;
-  font-family: 'Courier New', monospace;
+  font-family: 'Courier New', Courier, monospace;
   margin: 0;
-  overflow-x: hidden;
+  padding: 0;
+  overflow: hidden;
 }
 
 /* Futuristic Background */
@@ -14,11 +15,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    45deg,
-    rgba(0, 243, 255, 0.1),
-    rgba(0, 0, 0, 0.9)
-  );
+  background: linear-gradient(45deg, rgba(0, 243, 255, 0.1), rgba(0, 0, 0, 0.9));
   z-index: -1;
   pointer-events: none;
   animation: glow 5s infinite alternate;
@@ -26,18 +23,10 @@ body {
 
 @keyframes glow {
   from {
-    background: linear-gradient(
-      45deg,
-      rgba(0, 243, 255, 0.1),
-      rgba(0, 0, 0, 0.9)
-    );
+    background: linear-gradient(45deg, rgba(0, 243, 255, 0.1), rgba(0, 0, 0, 0.9));
   }
   to {
-    background: linear-gradient(
-      45deg,
-      rgba(255, 7, 58, 0.1),
-      rgba(0, 0, 0, 0.9)
-    );
+    background: linear-gradient(45deg, rgba(255, 7, 58, 0.1), rgba(0, 0, 0, 0.9));
   }
 }
 
@@ -47,7 +36,6 @@ body {
   padding-top: 5%;
 }
 
-/* Neon Title */
 .neon-title {
   font-size: 2.5rem;
   color: #00f3ff;
@@ -56,38 +44,32 @@ body {
 
 /* Puzzle Area */
 #puzzle-area {
-  margin: 2rem auto;
+  margin: 20px auto;
   width: 300px;
   height: 300px;
-  border: 2px solid #00f3ff;
-  background: rgba(0, 0, 0, 0.7);
-  position: relative;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-gap: 2px;
+  gap: 5px;
+  border: 2px solid #00f3ff;
 }
 
-/* Puzzle Pieces */
 .puzzle-piece {
-  background: #1a1a3a;
-  border: 1px solid #00f3ff;
-  color: #00f3ff;
+  background: rgba(0, 243, 255, 0.7);
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 2rem;
+  justify-content: center;
+  color: #000;
+  font-size: 24px;
+  font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 0 10px #00f3ff;
+  transition: transform 0.2s ease;
 }
 
 .puzzle-piece:hover {
-  background: #00f3ff;
-  color: #000;
-  box-shadow: 0 0 20px #00f3ff;
+  transform: scale(1.1);
 }
 
-/* Neon Buttons */
+/* Action Buttons */
 .neon-button {
   background: rgba(0, 0, 0, 0.7);
   border: 2px solid #00f3ff;
@@ -96,21 +78,23 @@ body {
   margin: 10px;
   border-radius: 5px;
   text-transform: uppercase;
-  letter-spacing: 1px;
   transition: all 0.3s ease;
   box-shadow: 0 0 10px #00f3ff;
-  cursor: pointer;
 }
 
 .neon-button:hover {
   background: #00f3ff;
   color: #000;
-  box-shadow: 0 0 20px #00f3ff;
+  box-shadow: 0 0 20px #00f3ff, 0 0 30px #0f0;
 }
 
 /* Leaderboard */
 #leaderboard {
   margin-top: 20px;
+}
+
+#leaderboard h2 {
+  color: #00f3ff;
 }
 
 #leaderboard-list {
@@ -119,9 +103,9 @@ body {
 }
 
 #leaderboard-list li {
-  padding: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid #00f3ff;
   color: #00f3ff;
-  background-color: rgba(0, 0, 0, 0.6);
+  padding: 5px;
   margin-bottom: 5px;
-  border-radius: 5px;
 }
