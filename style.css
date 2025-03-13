@@ -26,39 +26,14 @@
     animation: move-twink-back 200s linear infinite;
 }
 
-/* Welcome Screen */
-#welcome-screen {
-    text-align: center;
-    margin-top: 10%;
-}
-
+/* Neon Styling */
 .neon-title {
     color: #fff;
-    text-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff;
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073;
+    text-align: center;
     font-size: 3em;
 }
 
-.neon-subtitle {
-    color: #00ffff;
-    font-size: 1.2em;
-}
-
-#start-btn {
-    background-color: #ff00ff;
-    color: #fff;
-    border: none;
-    padding: 15px 30px;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-#start-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 20px #ff00ff;
-}
-
-/* Upload Button */
 .upload-btn {
     background: linear-gradient(45deg, #ff00ff, #00ffff);
     padding: 15px 30px;
@@ -68,10 +43,12 @@
     width: fit-content;
     margin: 20px auto;
     font-weight: bold;
+    transition: 0.3s;
 }
 
 .upload-btn:hover {
     transform: scale(1.1);
+    box-shadow: 0 0 20px #00ffff;
 }
 
 /* Puzzle Container */
@@ -101,18 +78,23 @@
     background: rgba(0, 0, 0, 0.9);
     padding: 30px;
     border-radius: 20px;
+    text-align: center;
     display: none;
+    border: 2px solid #ff00ff;
     box-shadow: 0 0 50px #ff00ff;
 }
 
 .emoji {
-    width: 100px;
+    width: 150px;
+    height: 150px;
 }
 
 .neon-win {
     color: #00ff00;
+    text-shadow: 0 0 10px #00ff00;
 }
 
 .neon-lose {
     color: #ff0000;
+    text-shadow: 0 0 10px #ff0000;
 }
