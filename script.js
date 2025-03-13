@@ -1,96 +1,88 @@
-let timeLeft = 60;
-let timerId;
-let correctPieces = 0;
-const totalPieces = 9;
+let pieces = [];
+let timer;
+let seconds = 0;
 
-// Initialize Konva Stage
-const stage = new Konva.Stage({
-    container: 'puzzle-container',
-    width: 500,
-    height: 500,
-});
+document.getElementById('upload').addEventListener('change', handleImage);
 
-// Timer Function
-function startTimer() {
-    timerId = setInterval(() => {
-        timeLeft--;
-        document.getElementById('timer').textContent = 
-            `${String(Math.floor(timeLeft/60)).padStart(2, '0')}:${String(timeLeft%60).padStart(2, '0')}`;
-        
-        if (timeLeft <= 0) {
-            clearInterval(timerId);
-            showResult(false);
-        }
-    }, 1000);
-}
-
-// Check Win Condition
-function checkWin() {
-    correctPieces++;
-    if (correctPieces === totalPieces) {
-        clearInterval(timerId);
-        showResult(true);
-    }
-}
-
-// Show Result
-function showResult(isWin) {
-    const popup = document.getElementById(isWin ? 'win-popup' : 'lose-popup');
-    const sound = document.getElementById(isWin ? 'win-sound' : 'lose-sound');
-    
-    popup.style.display = 'block';
-    sound.play();
-}
-
-// Create Puzzle
-function createPuzzle(image, gridSize = 3) {
-    const layer = new Konva.Layer();
-    const tileSize = 500 / gridSize;
-    let positions = [];
-
-    for (let i = 0; i < gridSize; i++) {
-        for (let j = 0; j < gridSize; j++) {
-            positions.push({ x: j * tileSize, y: i * tileSize });
-        }
-    }
-
-    positions = positions.sort(() => Math.random() - 0.5);
-
-    positions.forEach((pos, index) => {
-        const tile = new Konva.Image({
-            image: image,
-            crop: {
-                x: (index % gridSize) * tileSize,
-                y: Math.floor(index / gridSize) * tileSize,
-                width: tileSize,
-                height: tileSize,
-            },
-            width: tileSize,
-            height: tileSize,
-            draggable: true,
-            x: pos.x,
-            y: pos.y
-        });
-
-        tile.on('dragend', () => {
-            checkWin();
-        });
-
-        layer.add(tile);
-    });
-
-    stage.add(layer);
-    startTimer();
-}
-
-document.getElementById('photoUpload').addEventListener('change', (e) => {
-    const file = e.target.files[0];
+function handleImage(event) {
+  const file = event.target.files[0];
+  if (file) {
     const reader = new FileReader();
-    
-    reader.onload = (event) => {
-        const image = new Image();
-        image.onload = () => createPuzzle(image);
-        image.src = event.target.result;
-    };
+    reader.onload = (e) => createPuzzle(e.target.result);
     reader.readAsDataURL(file);
-});
+  }
+}
+
+function createPuzzle(imgSrc) {
+  clearInterval(timer);
+  seconds = 0;
+  document.getElementById('timer').textContent = "00:00";
+
+  pieces = [];
+  const container = document.getElementById('puzzle-container');
+  container.innerHTML = '';
+
+  for (let i = 0; i < 9; i++) {
+    const piece = document.createElement('div');
+    piece.classList.add('piece');
+    piece.style.backgroundImage = `url(${imgSrc})`;
+    piece.style.backgroundPosition = `${-100 * (i % 3)}px ${-100 * Math.floor(i / 3)}px`;
+    piece.dataset.index = i;
+    piece.draggable = true;
+
+    piece.addEventListener('dragstart', handleDragStart);
+    piece.addEventListener('dragover', handleDragOver);
+    piece.addEventListener('drop', handleDrop);
+
+    pieces.push(piece);
+    container.appendChild(piece);
+  }
+
+  shufflePieces();
+  startTimer();
+  playBackgroundAudio();
+}
+
+function shufflePieces() {
+  pieces.sort(() => Math.random() - 0.5);
+  const container = document.getElementById('puzzle-container');
+  container.innerHTML = '';
+  pieces.forEach((piece) => container.appendChild(piece));
+}
+
+function handleDragStart(event) {
+  event.dataTransfer.setData('text/plain', event.target.dataset.index);
+}
+
+function handleDragOver(event) {
+  event.preventDefault();
+}
+
+function handleDrop(event) {
+  const fromIndex = event.dataTransfer.getData('text/plain');
+  const toIndex = event.target.dataset.index;
+
+  const fromPiece = pieces[fromIndex];
+  const toPiece = pieces[toIndex];
+
+  pieces[fromIndex] = toPiece;
+  pieces[toIndex] = fromPiece;
+
+  const container = document.getElementById('puzzle-container');
+  container.innerHTML = '';
+  pieces.forEach((piece) => container.appendChild(piece));
+}
+
+function startTimer() {
+  timer = setInterval(() => {
+    seconds++;
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    document.getElementById('timer').textContent = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }, 1000);
+}
+
+function playBackgroundAudio() {
+  const audio = document.getElementById('background-audio');
+  audio.play().catch((e) => console.error('Audio play failed:', e));
+}
