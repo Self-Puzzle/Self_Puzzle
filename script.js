@@ -1,88 +1,66 @@
-// Puzzle Logic
 document.addEventListener('DOMContentLoaded', () => {
-    const puzzleArea = document.getElementById('puzzle-area');
-    const hintButton = document.getElementById('hint-button');
-    const restartButton = document.getElementById('restart-button');
+  const puzzleArea = document.getElementById('puzzle-area');
+  const hintButton = document.getElementById('hint-button');
+  const restartButton = document.getElementById('restart-button');
 
-    let pieces = [];
-    let moves = 0;
-    let startTime;
-    let timerInterval;
+  // Generate Puzzle Pieces
+  const generatePuzzle = () => {
+    puzzleArea.innerHTML = '';
+    let order = [...Array(9).keys()].sort(() => Math.random() - 0.5);
 
-    const createPuzzle = () => {
-        puzzleArea.innerHTML = '';
-        pieces = [];
-        moves = 0;
-        startTime = Date.now();
+    order.forEach((num) => {
+      const piece = document.createElement('div');
+      piece.classList.add('puzzle-piece');
+      piece.textContent = num + 1;
+      piece.draggable = true;
 
-        // Create pieces
-        for (let i = 0; i < 9; i++) {
-            const piece = document.createElement('div');
-            piece.classList.add('puzzle-piece');
-            piece.textContent = i + 1;
-            piece.setAttribute('data-index', i);
-            piece.draggable = true;
+      // Drag & Drop
+      piece.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', num);
+      });
 
-            pieces.push(piece);
-            puzzleArea.appendChild(piece);
-        }
+      piece.addEventListener('drop', (e) => {
+        e.preventDefault();
+        let draggedIndex = e.dataTransfer.getData('text/plain');
+        let targetIndex = order.indexOf(num);
 
-        // Shuffle pieces
-        shufflePieces();
+        [order[draggedIndex], order[targetIndex]] = [
+          order[targetIndex],
+          order[draggedIndex],
+        ];
 
-        // Start Timer
-        startTimer();
+        generatePuzzle();
+        checkWin(order);
+      });
 
-        // Drag/Drop Setup
-        pieces.forEach(piece => {
-            piece.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('text/plain', piece.getAttribute('data-index'));
-            });
+      piece.addEventListener('dragover', (e) => e.preventDefault());
 
-            piece.addEventListener('dragover', (e) => {
-                e.preventDefault();
-            });
-
-            piece.addEventListener('drop', (e) => {
-                e.preventDefault();
-                const fromIndex = e.dataTransfer.getData('text/plain');
-                const toIndex = piece.getAttribute('data-index');
-
-                swapPieces(fromIndex, toIndex);
-                moves++;
-            });
-        });
-    };
-
-    const shufflePieces = () => {
-        pieces.sort(() => Math.random() - 0.5);
-        pieces.forEach((piece, index) => {
-            piece.style.order = index;
-        });
-    };
-
-    const swapPieces = (fromIndex, toIndex) => {
-        const temp = pieces[fromIndex].textContent;
-        pieces[fromIndex].textContent = pieces[toIndex].textContent;
-        pieces[toIndex].textContent = temp;
-    };
-
-    const startTimer = () => {
-        clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-            const timeElapsed = Math.floor((Date.now() - startTime) / 1000);
-            document.getElementById('timer').textContent = `${timeElapsed}s`;
-        }, 1000);
-    };
-
-    // Hint Button
-    hintButton.addEventListener('click', () => {
-        alert('Hint: Match the pieces in order.');
+      puzzleArea.appendChild(piece);
     });
+  };
 
-    // Restart Button
-    restartButton.addEventListener('click', createPuzzle);
+  // Check Winning Condition
+  const checkWin = (order) => {
+    if (order.every((val, idx) => val === idx)) {
+      alert('You Won!');
+      updateLeaderboard();
+    }
+  };
 
-    // Initialize Game
-    createPuzzle();
+  // Update Leaderboard
+  const updateLeaderboard = () => {
+    const leaderboard = document.getElementById('leaderboard-list');
+    leaderboard.innerHTML += `<li>${new Date().toLocaleTimeString()} - Completed</li>`;
+  };
+
+  // Hint Button
+  hintButton.addEventListener('click', () => {
+    alert('Hint: Align the pieces in numerical order.');
+  });
+
+  // Restart Button
+  restartButton.addEventListener('click', () => generatePuzzle());
+
+  // Initialize Game
+  generatePuzzle();
 });
