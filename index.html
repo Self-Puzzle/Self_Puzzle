@@ -1,52 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CyberPuzzle 3000</title>
-  <link rel="stylesheet" href="styles/cyber.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Self Puzzle - Go Viral!</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/konva@8.4.3/konva.min.js"></script>
 </head>
 <body>
-  <div id="background-grid"></div>
-  
-  <div id="game-container">
-    <div id="hud">
-      <div class="hud-item">TIME: <span id="timer">00:00</span></div>
-      <div class="hud-item">MOVES: <span id="moves">0</span></div>
-      <div class="hud-item">ERRORS: <span id="errors">0</span></div>
+
+    <!-- Background Animation -->
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+
+    <!-- Futuristic Intro -->
+    <div id="intro">
+        <h1 class="intro-title">Welcome to SELF PUZZLE</h1>
+        <p class="intro-description">Unleash your mind. Solve yourself!</p>
+        <button id="start-button">Start</button>
     </div>
 
-    <h1 class="neon-title">CYBER<span>3000</span></h1>
-    
-    <div id="puzzle-area"></div>
-    
-    <div class="action-buttons">
-      <button id="hint-button" class="neon-button">HACK HINT</button>
-      <button id="restart-button" class="neon-button">REBOOT</button>
-    </div>
+    <!-- Game Container -->
+    <div id="game-container" style="display: none;">
+        <h1 class="neon-title">SELF PUZZLE</h1>
 
-    <div id="leaderboard">
-      <h2>GLOBAL LEADERBOARD</h2>
-      <ul id="leaderboard-list"></ul>
-    </div>
+        <!-- Upload Photo Button -->
+        <label class="upload-btn">
+            📸 UPLOAD PHOTO
+            <input type="file" id="photoUpload" accept="image/*" hidden />
+        </label>
 
-    <div id="victory-screen" class="hidden">
-      <div class="victory-content">
-        <h2>SYSTEM HACKED</h2>
-        <div class="stats">
-          <p>TIME: <span id="time-taken">00:00</span></p>
-          <p>ERRORS: <span id="mistakes-made">0</span></p>
+        <!-- Timer -->
+        <div id="timer" class="neon-timer">01:00</div>
+
+        <!-- Puzzle Container -->
+        <div id="puzzle-container"></div>
+
+        <!-- Result Popups -->
+        <div id="win-popup" class="popup">
+            <img src="images/win-emoji.gif" class="emoji" />
+            <h2 class="neon-win">YOU WON! 🎉</h2>
+            <audio id="win-sound" src="sounds/happy-smile.wav"></audio>
         </div>
-        <button id="share-button" class="neon-button">SHARE ACHIEVEMENT</button>
-      </div>
-    </div>
-  </div>
 
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
-  <script src="scripts/effects.js"></script>
-  <script src="scripts/audio.js"></script>
-  <script src="scripts/leaderboard.js"></script>
-  <script src="scripts/game.js"></script>
+        <div id="lose-popup" class="popup">
+            <img src="images/lose-emoji.gif" class="emoji" />
+            <h2 class="neon-lose">TIME'S UP! 😭</h2>
+            <audio id="lose-sound" src="sounds/sad-crying.wav"></audio>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
