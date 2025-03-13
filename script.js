@@ -1,66 +1,142 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const puzzleArea = document.getElementById('puzzle-area');
-  const hintButton = document.getElementById('hint-button');
-  const restartButton = document.getElementById('restart-button');
-  const successSound = document.getElementById('success-sound');
-  const dragSound = document.getElementById('drag-sound');
+class CyberPuzzle {
+  constructor() {
+    this.puzzleArea = document.getElementById('puzzle-area');
+    this.pieces = [];
+    this.moves = 0;
+    this.errors = 0;
+    this.startTime = null;
+    this.timerInterval = null;
+    this.draggedPiece = null;
+    this.init();
+  }
 
-  const pieces = [];
-  let moves = 0;
+  init() {
+    this.generatePuzzle(3);
+    this.setupEventListeners();
+    this.startTimer();
+  }
 
-  // Generate puzzle pieces
-  const generatePuzzle = () => {
-    puzzleArea.innerHTML = '';
-    moves = 0;
-    for (let i = 1; i <= 16; i++) {
+  generatePuzzle(size) {
+    this.puzzleArea.innerHTML = '';
+    this.pieces = [];
+    const pieceSize = 500 / size;
+
+    for(let i = 0; i < size * size; i++) {
       const piece = document.createElement('div');
-      piece.classList.add('puzzle-piece');
-      piece.textContent = i;
-      piece.setAttribute('draggable', true);
-
-      piece.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setData('text/plain', i);
-        dragSound.play();
-      });
-
-      piece.addEventListener('dragover', (e) => e.preventDefault());
-
-      piece.addEventListener('drop', (e) => {
-        e.preventDefault();
-        const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
-        const toIndex = parseInt(piece.textContent);
-        swapPieces(fromIndex, toIndex);
-      });
-
-      pieces.push(piece);
-      puzzleArea.appendChild(piece);
+      piece.className = 'puzzle-piece';
+      piece.style.width = `${pieceSize}px`;
+      piece.style.height = `${pieceSize}px`;
+      piece.dataset.correctPosition = i;
+      piece.textContent = i + 1;
+      
+      // Set random initial position
+      piece.style.left = `${Math.random() * (500 - pieceSize)}px`;
+      piece.style.top = `${Math.random() * (500 - pieceSize)}px`;
+      
+      this.pieces.push(piece);
+      this.puzzleArea.appendChild(piece);
+      new HologramEffect(piece);
     }
-  };
+  }
 
-  // Swap pieces
-  const swapPieces = (from, to) => {
-    const fromPiece = pieces.find((p) => parseInt(p.textContent) === from);
-    const toPiece = pieces.find((p) => parseInt(p.textContent) === to);
+  setupEventListeners() {
+    document.getElementById('hint-button').addEventListener('click', () => {
+      this.showHint();
+    });
 
-    if (fromPiece && toPiece) {
-      const temp = fromPiece.textContent;
-      fromPiece.textContent = toPiece.textContent;
-      toPiece.textContent = temp;
-      successSound.play();
-      moves++;
+    document.getElementById('restart-button').addEventListener('click', () => {
+      this.restartGame();
+    });
+
+    this.pieces.forEach(piece => {
+      piece.addEventListener('mousedown', e => {
+        this.draggedPiece = piece;
+        document.addEventListener('mousemove', this.handleMouseMove);
+        document.addEventListener('mouseup', this.handleMouseUp);
+      });
+    });
+  }
+
+  handleMouseMove = (e) => {
+    if(!this.draggedPiece) return;
+    
+    const rect = this.puzzleArea.getBoundingClientRect();
+    const x = e.clientX - rect.left - this.draggedPiece.offsetWidth/2;
+    const y = e.clientY - rect.top - this.draggedPiece.offsetHeight/2;
+    
+    this.draggedPiece.style.left = `${Math.max(0, Math.min(x, 500 - this.draggedPiece.offsetWidth))}px`;
+    this.draggedPiece.style.top = `${Math.max(0, Math.min(y, 500 - this.draggedPiece.offsetHeight))}px`;
+  }
+
+  handleMouseUp = () => {
+    if(!this.draggedPiece) return;
+    
+    this.moves++;
+    document.getElementById('moves').textContent = this.moves;
+    
+    if(!this.checkPosition(this.draggedPiece)) {
+      this.errors++;
+      document.getElementById('errors').textContent = this.errors;
+      playErrorSound();
     }
-  };
+    
+    this.draggedPiece = null;
+    document.removeEventListener('mousemove', this.handleMouseMove);
+    document.removeEventListener('mouseup', this.handleMouseUp);
+    
+    if(this.checkVictory()) this.handleVictory();
+  }
 
-  // Hint button
-  hintButton.addEventListener('click', () => {
-    alert('Hint: Align the pieces in numeric order.');
-  });
+  checkPosition(piece) {
+    const correctX = (piece.dataset.correctPosition % 3) * (500/3);
+    const correctY = Math.floor(piece.dataset.correctPosition / 3) * (500/3);
+    const currentX = parseFloat(piece.style.left);
+    const currentY = parseFloat(piece.style.top);
+    
+    return Math.abs(currentX - correctX) < 15 && Math.abs(currentY - correctY) < 15;
+  }
 
-  // Restart button
-  restartButton.addEventListener('click', () => {
-    generatePuzzle();
-  });
+  checkVictory() {
+    return this.pieces.every(piece => this.checkPosition(piece));
+  }
 
-  // Initialize game
-  generatePuzzle();
+  handleVictory() {
+    const timeTaken = (Date.now() - this.startTime) / 1000;
+    document.getElementById('time-taken').textContent = timeTaken.toFixed(2);
+    document.getElementById('mistakes-made').textContent = this.errors;
+    document.getElementById('victory-screen').classList.remove('hidden');
+    
+    playVictorySound();
+    addScoreToLeaderboard(timeTaken, this.errors);
+    fetchLeaderboard();
+  }
+
+  startTimer() {
+    this.startTime = Date.now();
+    this.timerInterval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+      document.getElementById('timer').textContent = 
+        `${String(Math.floor(elapsed / 60)).padStart(2, '0')}:${String(elapsed % 60).padStart(2, '0')}`;
+    }, 1000);
+  }
+
+  restartGame() {
+    clearInterval(this.timerInterval);
+    this.generatePuzzle(3);
+    this.moves = 0;
+    this.errors = 0;
+    document.getElementById('moves').textContent = '0';
+    document.getElementById('errors').textContent = '0';
+    document.getElementById('victory-screen').classList.add('hidden');
+    this.startTimer();
+  }
+
+  showHint() {
+    // Implementation for hint system
+  }
+}
+
+// Initialize game
+window.addEventListener('load', () => {
+  const game = new CyberPuzzle();
 });
