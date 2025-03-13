@@ -1,82 +1,84 @@
-const stage = new Konva.Stage({
-    container: 'puzzle-container',
-    width: 400,
-    height: 400,
-});
-
-document.getElementById('start-button').addEventListener('click', () => {
-    document.getElementById('intro').style.display = 'none';
-    document.getElementById('game-container').style.display = 'block';
-});
-
-let timer;
+let timerId;
+let timeLeft = 60;
 let correctPieces = 0;
 const totalPieces = 9;
 
+// Start Button
+document.getElementById('start-btn').addEventListener('click', () => {
+    document.getElementById('welcome-screen').style.display = 'none';
+    document.getElementById('game-container').style.display = 'block';
+});
+
+// Start Timer
 function startTimer() {
-    let timeLeft = 60;
-    const timerElement = document.getElementById('timer');
-    timer = setInterval(() => {
+    timerId = setInterval(() => {
         timeLeft--;
-        timerElement.textContent = `00:${String(timeLeft).padStart(2, '0')}`;
-        if (timeLeft === 0) {
-            clearInterval(timer);
+        document.getElementById('timer').textContent = 
+            `${String(Math.floor(timeLeft / 60)).padStart(2, '0')}:${String(timeLeft % 60).padStart(2, '0')}`;
+
+        if (timeLeft <= 0) {
+            clearInterval(timerId);
             showResult(false);
         }
     }, 1000);
 }
 
-function showResult(win) {
-    document.getElementById(win ? 'win-popup' : 'lose-popup').style.display = 'block';
-    document.getElementById(win ? 'win-sound' : 'lose-sound').play();
+// Show Result
+function showResult(isWin) {
+    const popup = document.getElementById(isWin ? 'win-popup' : 'lose-popup');
+    const sound = document.getElementById(isWin ? 'win-sound' : 'lose-sound');
+    popup.style.display = 'block';
+    sound.play();
 }
 
+// Create Puzzle
 function createPuzzle(image) {
-    const layer = new Konva.Layer();
-    const size = 400 / 3;
-    let positions = [...Array(9).keys()].map(i => ({
-        x: (i % 3) * size,
-        y: Math.floor(i / 3) * size
-    }));
-
-    positions = positions.sort(() => Math.random() - 0.5);
-
-    positions.forEach((pos, i) => {
-        const tile = new Konva.Image({
-            image,
-            x: pos.x,
-            y: pos.y,
-            width: size,
-            height: size,
-            crop: {
-                x: (i % 3) * size,
-                y: Math.floor(i / 3) * size,
-                width: size,
-                height: size
-            },
-            draggable: true,
-        });
-
-        tile.on('dragend', () => {
-            if (tile.x() === pos.x && tile.y() === pos.y) {
-                correctPieces++;
-                if (correctPieces === totalPieces) showResult(true);
-            }
-        });
-
-        layer.add(tile);
+    const stage = new Konva.Stage({
+        container: 'puzzle-container',
+        width: 500,
+        height: 500
     });
+
+    const layer = new Konva.Layer();
+    const tileSize = 500 / 3;
+
+    let pieces = [];
+
+    for (let y = 0; y < 3; y++) {
+        for (let x = 0; x < 3; x++) {
+            let tile = new Konva.Image({
+                image,
+                crop: {
+                    x: x * tileSize,
+                    y: y * tileSize,
+                    width: tileSize,
+                    height: tileSize
+                },
+                x: Math.random() * 400,
+                y: Math.random() * 400,
+                draggable: true
+            });
+
+            tile.on('dragend', () => {
+                correctPieces++;
+                if (correctPieces === 9) showResult(true);
+            });
+
+            layer.add(tile);
+        }
+    }
 
     stage.add(layer);
     startTimer();
 }
 
-document.getElementById('photoUpload').addEventListener('change', e => {
+// File Upload
+document.getElementById('photoUpload').addEventListener('change', (e) => {
     const reader = new FileReader();
-    reader.onload = ev => {
+    reader.onload = (event) => {
         const img = new Image();
-        img.src = ev.target.result;
         img.onload = () => createPuzzle(img);
+        img.src = event.target.result;
     };
     reader.readAsDataURL(e.target.files[0]);
 });
