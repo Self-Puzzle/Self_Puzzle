@@ -1,39 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CyberPuzzle 3000</title>
-  <link rel="stylesheet" href="styles/cyber.css">
+  <link rel="stylesheet" href="./styles/cyber.css" />
 </head>
 <body>
+  <!-- Futuristic Background -->
+  <div id="background-grid"></div>
 
-<!-- Futuristic Background -->
-<div id="background-grid"></div>
+  <!-- Game Container -->
+  <div id="game-container">
+    <h1 class="neon-title">CYBERPUZZLE 3000</h1>
+    <p>Assemble the pieces to unlock the future.</p>
 
-<!-- Game Container -->
-<div id="game-container">
-  <h1 class="neon-title">CYBERPUZZLE 3000</h1>
-  <p>Assemble the pieces to unlock the future.</p>
+    <!-- Puzzle Area -->
+    <div id="puzzle-area"></div>
 
-  <!-- Puzzle Area -->
-  <div id="puzzle-area"></div>
+    <!-- Buttons -->
+    <div class="action-buttons">
+      <button id="hint-button" class="neon-button">Get Hint</button>
+      <button id="restart-button" class="neon-button">Restart</button>
+    </div>
 
-  <!-- Buttons -->
-  <div class="action-buttons">
-    <button id="hint-button" class="neon-button">Get Hint</button>
-    <button id="restart-button" class="neon-button">Restart</button>
+    <!-- Leaderboard -->
+    <div id="leaderboard">
+      <h2>Leaderboard</h2>
+      <ul id="leaderboard-list"></ul>
+    </div>
   </div>
 
-  <!-- Leaderboard -->
-  <div id="leaderboard">
-    <h2>Leaderboard</h2>
-    <ul id="leaderboard-list"></ul>
-  </div>
-</div>
-
-<!-- Scripts -->
-<script src="scripts/game.js"></script>
-
+  <!-- Scripts -->
+  <script src="./scripts/game.js"></script>
 </body>
 </html>
