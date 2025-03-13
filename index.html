@@ -3,23 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CyberPuzzle 3000</title>
+  <title>Self Puzzle 3000</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-
   <!-- Futuristic Background -->
   <div id="background-grid"></div>
 
   <!-- Game Container -->
   <div id="game-container">
-    <h1 class="neon-title">CYBERPUZZLE 3000</h1>
-    <p>Assemble the pieces to unlock the future.</p>
+    <h1 class="neon-title">SELF PUZZLE 3000</h1>
+    <p>Drag and solve the pieces to unlock the future.</p>
 
     <!-- Puzzle Area -->
     <div id="puzzle-area"></div>
 
-    <!-- Action Buttons -->
+    <!-- Buttons -->
     <div class="action-buttons">
       <button id="hint-button" class="neon-button">Get Hint</button>
       <button id="restart-button" class="neon-button">Restart</button>
@@ -31,6 +30,10 @@
       <ul id="leaderboard-list"></ul>
     </div>
   </div>
+
+  <!-- Audio -->
+  <audio id="success-sound" src="./sounds/success.mp3"></audio>
+  <audio id="drag-sound" src="./sounds/drag.mp3"></audio>
 
   <!-- Scripts -->
   <script src="script.js"></script>
