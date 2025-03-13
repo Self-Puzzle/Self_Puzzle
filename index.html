@@ -1,43 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Self Puzzle - Go Viral!</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/konva@8.4.3/konva.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberPuzzle 3000</title>
+  <link rel="stylesheet" href="styles/cyber.css">
 </head>
 <body>
-    <!-- Background Animation -->
-    <div class="stars"></div>
-    <div class="twinkling"></div>
-    
-    <!-- Game Container -->
-    <div class="container">
-        <h1 class="neon-title">SELF PUZZLE</h1>
-        
-        <label class="upload-btn">
-            📸 UPLOAD PHOTO
-            <input type="file" id="photoUpload" accept="image/*" hidden />
-        </label>
 
-        <div id="timer" class="neon-timer">01:00</div>
-        <div id="puzzle-container"></div>
+<!-- Futuristic Background -->
+<div id="background-grid"></div>
 
-        <!-- Result Popups -->
-        <div id="win-popup" class="popup">
-            <img src="images/aniversário-comemoração.gif" class="emoji">
-            <h2 class="neon-win">YOU WON! 🎉</h2>
-            <audio id="win-sound" src="sounds/happy smile.wav"></audio>
-        </div>
+<!-- Game Container -->
+<div id="game-container">
+  <h1 class="neon-title">CYBERPUZZLE 3000</h1>
+  <p>Assemble the pieces to unlock the future.</p>
 
-        <div id="lose-popup" class="popup">
-            <img src="images/crying-emoji-crying.gif" class="emoji">
-            <h2 class="neon-lose">TIME'S UP! 😭</h2>
-            <audio id="lose-sound" src="sounds/sad-crying.wav"></audio>
-        </div>
-    </div>
+  <!-- Puzzle Area -->
+  <div id="puzzle-area"></div>
 
-    <script src="script.js"></script>
+  <!-- Buttons -->
+  <div class="action-buttons">
+    <button id="hint-button" class="neon-button">Get Hint</button>
+    <button id="restart-button" class="neon-button">Restart</button>
+  </div>
+
+  <!-- Leaderboard -->
+  <div id="leaderboard">
+    <h2>Leaderboard</h2>
+    <ul id="leaderboard-list"></ul>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="scripts/game.js"></script>
+
 </body>
 </html>
