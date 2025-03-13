@@ -3,66 +3,89 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Self Puzzle</title>
+  <title>Futuristic Self Puzzle</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #000;
+      font-family: 'Poppins', sans-serif;
+      background: #000;
+      background-image: url('https://wallpapercave.com/wp/wp7629961.jpg');
+      background-size: cover;
+      background-position: center;
       color: #fff;
-      text-align: center;
       margin: 0;
       padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
     }
+
     h1 {
-      font-size: 36px;
+      font-size: 40px;
       color: #ff00ff;
-      text-shadow: 0 0 20px #ff00ff;
+      text-shadow: 0 0 30px #ff00ff;
+      margin-bottom: 10px;
     }
+
     #upload-btn {
-      padding: 10px 20px;
+      padding: 12px 24px;
       background-color: #1e90ff;
       color: white;
       border: none;
-      border-radius: 20px;
+      border-radius: 30px;
       cursor: pointer;
-      margin-top: 10px;
-      box-shadow: 0 0 15px #1e90ff;
+      margin-bottom: 15px;
+      font-size: 16px;
+      transition: background 0.3s ease;
+      box-shadow: 0 0 20px #1e90ff;
     }
+
     #timer {
       font-size: 24px;
       color: #00ff00;
-      margin: 10px;
+      text-shadow: 0 0 20px #00ff00;
+      margin-bottom: 15px;
     }
+
     .puzzle-container {
       display: grid;
       grid-template-columns: repeat(3, 100px);
       grid-template-rows: repeat(3, 100px);
-      gap: 2px;
-      margin: 20px auto;
-      border: 2px solid #00ffff;
+      gap: 3px;
+      border: 2px solid #ff00ff;
+      box-shadow: 0 0 30px #ff00ff;
       padding: 5px;
-      box-shadow: 0 0 20px #00ffff;
-      width: 310px;
+      background: rgba(0, 0, 0, 0.8);
+      transition: box-shadow 0.3s ease;
     }
+
     .tile {
       width: 100px;
       height: 100px;
       background-size: 300px 300px;
-      background-color: #111;
+      border-radius: 5px;
       border: 2px solid #ff00ff;
-      box-shadow: 0 0 15px #ff00ff;
-      transition: transform 0.3s ease;
+      box-shadow: 0 0 20px #ff00ff;
+      transition: transform 0.2s ease;
       cursor: pointer;
     }
+
     .empty-tile {
-      background-color: #000;
+      background-color: rgba(0, 0, 0, 0.5);
       border: 2px solid #00ff00;
-      box-shadow: 0 0 15px #00ff00;
+      box-shadow: 0 0 20px #00ff00;
     }
+
+    .tile:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px #ff00ff;
+    }
+
     #message {
-      font-size: 24px;
-      color: #ff00ff;
-      margin-top: 10px;
+      font-size: 22px;
+      color: #00ff00;
+      margin-top: 15px;
     }
   </style>
 </head>
@@ -76,7 +99,7 @@
 
 <audio id="move-sound" src="https://www.soundjay.com/button/button-3.mp3"></audio>
 <audio id="win-sound" src="https://www.soundjay.com/button/button-2.mp3"></audio>
-<audio id="bg-music" src="https://www.soundjay.com/background-music.mp3" loop></audio>
+<audio id="bg-music" src="https://www.fesliyanstudios.com/play-mp3/387" loop></audio>
 
 <script>
   const puzzleContainer = document.getElementById('puzzle');
@@ -139,10 +162,10 @@
 
   function getAdjacentTiles(index) {
     const neighbors = [];
-    if (index % 3 !== 0) neighbors.push(index - 1); // Left
-    if (index % 3 !== 2) neighbors.push(index + 1); // Right
-    if (index >= 3) neighbors.push(index - 3); // Up
-    if (index < 6) neighbors.push(index + 3); // Down
+    if (index % 3 !== 0) neighbors.push(index - 1);
+    if (index % 3 !== 2) neighbors.push(index + 1);
+    if (index >= 3) neighbors.push(index - 3);
+    if (index < 6) neighbors.push(index + 3);
     return neighbors;
   }
 
@@ -176,24 +199,19 @@
   }
 
   function checkWin() {
-    for (let i = 0; i < 8; i++) {
-      if (tiles[i].style.backgroundPosition !== `-${(i % 3) * 100}px -${Math.floor(i / 3) * 100}px`) {
-        return false;
-      }
-    }
-    return true;
+    return tiles.every((tile, index) => tile.style.backgroundPosition === `-${(index % 3) * 100}px -${Math.floor(index / 3) * 100}px`);
   }
 
   function handleWin() {
     clearInterval(timer);
-    messageDisplay.textContent = 'Congratulations! 🎉 You solved it!';
+    messageDisplay.textContent = 'You Won! 🎉';
     winSound.play();
     bgMusic.pause();
   }
 
   function handleLoss() {
     clearInterval(timer);
-    messageDisplay.textContent = "Time's up! 😭";
+    messageDisplay.textContent = "Time's Up! 😢";
     bgMusic.pause();
   }
 </script>
