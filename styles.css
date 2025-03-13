@@ -1,107 +1,108 @@
-/* General Styling */
-body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #000;
-    color: #fff;
-}
-
-/* Background Animation */
-.stars, .twinkling {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.stars {
-    background: url('https://www.script-tutorials.com/demos/360/images/stars.png') repeat;
-    z-index: -2;
-}
-
-.twinkling {
-    background: url('https://www.script-tutorials.com/demos/360/images/twinkling.png') repeat;
-    animation: move-twinkling 200s linear infinite;
-    z-index: -1;
-}
-
-@keyframes move-twinkling {
+/* Cosmic Background */
+@keyframes move-twink-back {
     from { background-position: 0 0; }
     to { background-position: -10000px 5000px; }
 }
 
-/* Intro Section */
-#intro {
-    position: absolute;
-    top: 30%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.stars, .twinkling {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.stars {
+    background: #000 url('https://www.script-tutorials.com/demos/360/images/stars.png') repeat top center;
+    z-index: -2;
+}
+
+.twinkling {
+    background: transparent url('https://www.script-tutorials.com/demos/360/images/twinkling.png') repeat top center;
+    z-index: -1;
+    animation: move-twink-back 200s linear infinite;
+}
+
+/* Welcome Screen */
+#welcome-screen {
     text-align: center;
+    margin-top: 10%;
 }
 
-.intro-title {
-    font-size: 3rem;
-    color: #ff00ff;
-    text-shadow: 0 0 20px #ff00ff;
+.neon-title {
+    color: #fff;
+    text-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff;
+    font-size: 3em;
 }
 
-.intro-description {
-    font-size: 1.5rem;
+.neon-subtitle {
     color: #00ffff;
+    font-size: 1.2em;
 }
 
-#start-button {
-    padding: 10px 30px;
-    background: linear-gradient(45deg, #ff00ff, #00ffff);
+#start-btn {
+    background-color: #ff00ff;
+    color: #fff;
     border: none;
-    color: #000;
-    font-weight: bold;
-    cursor: pointer;
+    padding: 15px 30px;
     border-radius: 30px;
+    cursor: pointer;
     transition: 0.3s;
 }
 
-#start-button:hover {
+#start-btn:hover {
     transform: scale(1.1);
-    box-shadow: 0 0 20px #00ffff;
+    box-shadow: 0 0 20px #ff00ff;
 }
 
-/* Neon Title */
-.neon-title {
-    font-size: 2.5rem;
-    text-align: center;
-    color: #fff;
-    text-shadow: 0 0 10px #00ffff;
+/* Upload Button */
+.upload-btn {
+    background: linear-gradient(45deg, #ff00ff, #00ffff);
+    padding: 15px 30px;
+    border-radius: 30px;
+    cursor: pointer;
+    display: block;
+    width: fit-content;
+    margin: 20px auto;
+    font-weight: bold;
+}
+
+.upload-btn:hover {
+    transform: scale(1.1);
 }
 
 /* Puzzle Container */
 #puzzle-container {
-    width: 400px;
-    height: 400px;
-    border: 3px solid #00ffff;
+    width: 500px;
+    height: 500px;
     margin: 20px auto;
-    background-color: rgba(0, 0, 0, 0.5);
+    border: 3px solid #00ffff;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.7);
 }
 
 /* Timer */
 .neon-timer {
+    font-size: 2.5em;
     text-align: center;
-    font-size: 2rem;
     color: #00ff00;
+    text-shadow: 0 0 10px #00ff00;
 }
 
-/* Popups */
+/* Result Popups */
 .popup {
-    display: none;
     position: fixed;
-    top: 30%;
+    top: 50%;
     left: 50%;
-    transform: translate(-50%, -30%);
-    padding: 20px;
-    background-color: rgba(0, 0, 0, 0.8);
-    border: 3px solid #ff00ff;
-    text-align: center;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.9);
+    padding: 30px;
+    border-radius: 20px;
+    display: none;
+    box-shadow: 0 0 50px #ff00ff;
 }
 
 .emoji {
